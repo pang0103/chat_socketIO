@@ -21,7 +21,7 @@
   width: calc(100% - 800px);
   width: 1000px;
   margin: 25px 10px;
-  height: calc(100% - 500px);
+  height: calc(100% - 200px);
   border: var(--border);
   border-radius: 5px;
   background: var(--msger-bg);

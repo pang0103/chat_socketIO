@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { serverhost } from "../api/url";
 import io from "socket.io-client";
 import "../css/chatboard.css";
@@ -12,6 +13,11 @@ export default function Chatboard(props) {
 
   const channel = props.channel;
   const username = props.userName;
+
+  const scroll = () => {
+    let chat = document.getElementById("msger-chat");
+    chat.scrollTop += 500;
+  };
 
   useEffect(() => {
     socket = io(serverhost.url);
@@ -34,6 +40,9 @@ export default function Chatboard(props) {
     };
   });
 
+  useEffect(() => {
+    scroll();
+  }, [messageList]);
   const sendMessage = async (e) => {
     //prevent page refresh
     e.preventDefault();
@@ -50,6 +59,7 @@ export default function Chatboard(props) {
     await socket.emit("send_message", messageContent);
     setmessageList([...messageList, messageContent.content]);
     setmessage("");
+    e.target.reset();
   };
 
   const displayTime = (stamp) => {
@@ -81,7 +91,7 @@ export default function Chatboard(props) {
             </span>
           </div>
         </header>
-        <main className="msger-chat">
+        <main id="msger-chat" className="msger-chat">
           {messageList.map((val, key) => {
             return (
               <div
