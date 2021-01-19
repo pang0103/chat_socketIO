@@ -8,7 +8,8 @@ export default function Login(props) {
 
   const [status, setstatus] = useState("");
 
-  const login = () => {
+  const login = (e) => {
+    e.preventDefault();
     if (usernameLogin && passwordLogin) {
       Axios.post(`${serverhost.url}/login`, {
         username: usernameLogin,
@@ -29,8 +30,8 @@ export default function Login(props) {
 
   return (
     <div className="form">
-      <form style={{ border: "1px solid #1eaabd" }}>
-        <div className="container">
+      <form style={{ border: "1px solid #1eaabd" }} onSubmit={login}>
+        <div className="container fillinform">
           <h1>Login</h1>
           <hr />
           <label htmlFor="email">
@@ -58,11 +59,9 @@ export default function Login(props) {
             required
           />
           <h4 style={{ color: "red" }}>{status}</h4>
+          <input className="signupbtn buttonform" type="submit"></input>
         </div>
       </form>
-      <button className="signupbtn buttonform" onClick={login}>
-        Login
-      </button>
     </div>
   );
 }

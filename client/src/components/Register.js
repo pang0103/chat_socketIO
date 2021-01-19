@@ -10,7 +10,8 @@ export default function Register(props) {
   const [pagemessage, setpagemessage] = useState("");
 
   //reigster: req to backend
-  const register = () => {
+  const register = (e) => {
+    e.preventDefault();
     if (usernameReg && passwordReg) {
       Axios.post(`${serverhost.url}/register`, {
         username: usernameReg,
@@ -24,8 +25,8 @@ export default function Register(props) {
 
   return (
     <div className="form">
-      <form style={{ border: "1px solid #1eaabd" }}>
-        <div className="container">
+      <form style={{ border: "1px solid #1eaabd" }} onSubmit={register}>
+        <div className="container fillinform">
           <h1>Sign Up</h1>
           <p>Please fill in this form to create an account.</p>
           <hr />
@@ -65,12 +66,10 @@ export default function Register(props) {
           <p>
             Already have a account ?<a href="/login"> Login here</a>
           </p>
+          <h4>{pagemessage}</h4>
+          <input className="signupbtn buttonform" type="submit"></input>
         </div>
-        <h4>{pagemessage}</h4>
       </form>
-      <button className="signupbtn buttonform" onClick={register}>
-        Sign Up
-      </button>
     </div>
   );
 }
