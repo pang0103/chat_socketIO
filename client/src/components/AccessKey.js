@@ -3,12 +3,13 @@ import Axios from "axios";
 import { serverhost } from "../api/url";
 import io from "socket.io-client";
 import Modal from "react-modal";
+import axios from "axios";
 
 let socket;
 
 export default function AccessKey(props) {
   const [accessID, setaccessID] = useState("");
-  const [accessCode, setaccessCode] = useState("---");
+  const [accessCode, setaccessCode] = useState("----");
 
   const [expireCounter, setexpireCounter] = useState(0);
 
@@ -77,10 +78,9 @@ export default function AccessKey(props) {
   //send request to target
   const requestToChannel = () => {
     //props.chatStarted(true);
-    //console.log(join_accessCode);
-    //socket.emit("join_request", join_accessCode);
-    //socket.emit("join_room", join_accessCode);
+
     if (validateKey(join_accessCode)) {
+      console.log("join ");
       socket.emit("join_room", { user: props.userName, code: join_accessCode });
       socket.emit("join_request", {
         room: `${join_accessCode}`,
@@ -106,6 +106,17 @@ export default function AccessKey(props) {
 
   //Validate key from backend
   const validateKey = (join_accessCode) => {
+    Axios.post(`${serverhost.url}/keyverify`, {
+      code: join_accessCode,
+    }).then((response) => {
+      console.log("valid");
+      console.log(response.data);
+      if (response.data.message != true) {
+        console.log("returned false");
+      } else {
+        console.log("returned true");
+      }
+    });
     return true;
   };
 
@@ -191,7 +202,6 @@ export default function AccessKey(props) {
           {" "}
           Join !{" "}
         </button>
-        <button onClick={socket_discoonect}></button>
         <h2>{request_status_message}</h2>
       </div>
       {receivedRequest ? (

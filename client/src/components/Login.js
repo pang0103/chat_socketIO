@@ -58,6 +58,9 @@ export default function Login(props) {
             }}
             required
           />
+          <p>
+            Do not have a account ?<a href="/register"> Register here</a>
+          </p>
           <h4 style={{ color: "red" }}>{status}</h4>
           <input className="signupbtn buttonform" type="submit"></input>
         </div>

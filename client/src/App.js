@@ -43,13 +43,16 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Navbar
-          userName={userName}
-          isAuth={isAuth}
-          confirmlogout={confirmLogout}
-        />
+        {isAuth ? (
+          <Navbar
+            userName={userName}
+            isAuth={isAuth}
+            confirmlogout={confirmLogout}
+          />
+        ) : null}
+
         <Route path="/" exact>
-          {!isAuth ? <Login isAuth={confirmAuth} /> : null}
+          {!isAuth ? <Login isAuth={confirmAuth} /> : <Redirect to="/chat" />}
         </Route>
 
         <Route path="/chat" exact>
