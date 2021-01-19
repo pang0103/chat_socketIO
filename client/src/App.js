@@ -49,11 +49,13 @@ function App() {
           confirmlogout={confirmLogout}
         />
         <Route path="/" exact>
-          {!isAuth ? <a href="/login">Click here to login</a> : null}
+          {!isAuth ? <Login isAuth={confirmAuth} /> : null}
         </Route>
 
         <Route path="/chat" exact>
-          {!chatStarted ? (
+          {!isAuth ? (
+            <Redirect to="/" />
+          ) : !chatStarted ? (
             <AccessKey chatStarted={confirmJoinedroom} userName={userName} />
           ) : (
             <Chatboard channel={chatChannel} userName={userName} />
