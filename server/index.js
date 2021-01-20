@@ -3,6 +3,7 @@ const mysql = require("mysql");
 const cors = require("cors");
 const socket = require("socket.io");
 const { response } = require("express");
+const e = require("express");
 
 const app = express();
 app.use(express.json());
@@ -109,16 +110,6 @@ app.post("/login", (req, res) => {
 
 const fakeToken = "000";
 
-async function activeSessionKeyManager() {
-  i = 1;
-  setInterval(() => {
-    //console.log(i);
-    i++;
-  }, 1000);
-}
-
-activeSessionKeyManager();
-
 const genSessionKey = () => {
   //range from 100 - 999
   return Math.floor(Math.random() * (9999 - 100 + 1) + 100);
@@ -128,7 +119,7 @@ app.post("/keygen", (req, res) => {
   if (req.body.token == fakeToken) {
     activeSessionKey.push({
       code: genSessionKey(),
-      timestamp: `${Date.now()}`,
+      timestamp: parseInt(`${Date.now()}`),
     });
     console.log(activeSessionKey);
     console.log("Accpetd keygen request");
@@ -142,3 +133,24 @@ app.post("/chatrequest", (req, res) => {
     res.send({ message: "accepted" });
   }
 });
+
+function isValidKey(key) {
+  const ts = activeSessionKey.find(({ code }) => code === key);
+  //60s expire time
+  if (ts == undefined || Date.now() - ts.timestamp > 60000) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+app.post("/keyverify", (req, res) => {
+  console.log("Key verification reqest on code: " + req.body.code);
+  if (isValidKey(parseInt(req.body.code))) {
+    res.send({ message: true });
+  } else {
+    res.send({ message: false });
+  }
+});
+
+console.log(isValidKey(555)); // { name: 'cherries', quantity: 5 }
