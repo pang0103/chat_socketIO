@@ -7,6 +7,7 @@ import Profile from "./components/Profile";
 import ProtectedRoute from "./ProtectedRoute";
 import AccessKey from "./components/AccessKey";
 import Chatboard from "./components/Chatboard";
+import Axios from "axios";
 import "./App.css";
 
 function App() {
@@ -40,6 +41,15 @@ function App() {
     setchatChannel(channelCode);
   };
 
+  const userAuthtemp = () => {
+    Axios.get("http://ccp.zone:3001/isUserAuth", {
+      headers: {
+        "x-access-token": sessionStorage.getItem("token"),
+      },
+    }).then((response) => {
+      console.log(response);
+    });
+  };
   return (
     <div className="App">
       <Router>
@@ -76,6 +86,8 @@ function App() {
           component={Profile}
         />
       </Router>
+
+      {isAuth ? <button onClick={userAuthtemp}> Authed ?</button> : null}
     </div>
   );
 }

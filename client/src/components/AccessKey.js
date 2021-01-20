@@ -123,7 +123,7 @@ export default function AccessKey(props) {
   //Gen random code from backend
   const getKey = () => {
     Axios.post(`${serverhost.url}/keygen`, {
-      token: fakeToken,
+      token: sessionStorage.getItem("token"),
     }).then((response) => {
       console.log(response.data.code);
       setaccessCode(response.data.code);
@@ -133,10 +133,6 @@ export default function AccessKey(props) {
 
   const startTimer = () => {
     setexpireCounter(60);
-  };
-
-  const socket_discoonect = () => {
-    socket.disconnect();
   };
 
   const customStyles = {

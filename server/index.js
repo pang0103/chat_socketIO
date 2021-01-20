@@ -1,9 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql");
 const cors = require("cors");
 const socket = require("socket.io");
+const jwt = require("jsonwebtoken");
 const { response } = require("express");
-const e = require("express");
 
 const app = express();
 app.use(express.json());
@@ -15,8 +16,9 @@ const PORT = 3001;
 const server = app.listen(PORT, () => {
   console.log(` *********** server started at ${PORT}`);
 });
+console.log(process.env.JWT_SECRET);
 
-const activeSessionKey = [
+const activeSocketRoomKey = [
   {
     code: 555,
     timestamp: 1610629164099,
@@ -86,8 +88,27 @@ app.post("/register", (req, res) => {
   );
 });
 
+const verifiyJWT = (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (!token) {
+    res.sendStatus(403);
+  } else {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        res.sendStatus(403);
+      } else {
+        req.userId = decoded.id;
+        next();
+      }
+    });
+  }
+};
+
+app.get("/isUserAuth", verifiyJWT, (req, res) => {
+  res.send("YO ! you are authenticated");
+});
+
 app.post("/login", (req, res) => {
-  console.log(req.body);
   const username = req.body.username;
   const password = req.body.password;
 
@@ -98,11 +119,15 @@ app.post("/login", (req, res) => {
       if (err) {
         console.log("err: " + err);
       } else if (result.length > 0) {
+        const id = result[0].id;
+        const token = jwt.sign({ id }, process.env.JWT_SECRET, {
+          expiresIn: 3000,
+        });
         console.log("result: " + result);
-        res.send({ message: "tempToken" });
+        res.json({ auth: true, token: token, result: result });
       } else if (result.length == 0) {
-        console.log("user login attpemt fail");
-        res.send({ message: "fail" });
+        console.log("user login attempt fail");
+        res.json({ auth: false, message: "Login attempt fail" });
       }
     }
   );
@@ -110,21 +135,22 @@ app.post("/login", (req, res) => {
 
 const fakeToken = "000";
 
-const genSessionKey = () => {
-  //range from 100 - 999
-  return Math.floor(Math.random() * (9999 - 100 + 1) + 100);
+const genSocketRoomKey = () => {
+  return Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
 };
 
-app.post("/keygen", (req, res) => {
+app.post("/keygen", verifiyJWT, (req, res) => {
   if (req.body.token == fakeToken) {
-    activeSessionKey.push({
-      code: genSessionKey(),
+    activeSocketRoomKey.push({
+      code: genSocketRoomKey(),
       timestamp: parseInt(`${Date.now()}`),
     });
-    console.log(activeSessionKey);
+    console.log(activeSocketRoomKey);
     console.log("Accpetd keygen request");
     //console.log(activeSessionKey[0].code);
-    res.send({ code: activeSessionKey[activeSessionKey.length - 1].code });
+    res.send({
+      code: activeSocketRoomKey[activeSocketRoomKey.length - 1].code,
+    });
   }
 });
 
@@ -135,7 +161,7 @@ app.post("/chatrequest", (req, res) => {
 });
 
 function isValidKey(key) {
-  const ts = activeSessionKey.find(({ code }) => code === key);
+  const ts = activeSocketRoomKey.find(({ code }) => code === key);
   //60s expire time
   if (ts == undefined || Date.now() - ts.timestamp > 60000) {
     return false;
@@ -153,4 +179,4 @@ app.post("/keyverify", (req, res) => {
   }
 });
 
-console.log(isValidKey(555)); // { name: 'cherries', quantity: 5 }
+//console.log(isValidKey(555)); // { name: 'cherries', quantity: 5 }
