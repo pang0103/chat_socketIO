@@ -4,6 +4,7 @@ import { serverhost } from "../api/url";
 import io from "socket.io-client";
 import Modal from "react-modal";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 let socket;
 
@@ -20,7 +21,11 @@ export default function AccessKey(props) {
   const [request_status_message, setrequest_status_message] = useState("");
   const [receivedRequest, setreceivedRequest] = useState(false);
 
-  const fakeToken = "000";
+  const [getKeyMessage, setgetKeyMessage] = useState("");
+
+  const headers = {
+    "x-access-token": sessionStorage.getItem("token"),
+  };
 
   // TO DO:
   // move the socket instance to chatboard
@@ -75,10 +80,34 @@ export default function AccessKey(props) {
     });
   });
 
+  //Validate key from backend
+  const validateKey = (join_accessCode) => {
+    Axios.post(`${serverhost.url}/keyverify`, {
+      code: join_accessCode,
+    })
+      .then((response) => {
+        console.log("valid");
+        console.log(response.data);
+        if (response.data.message != true) {
+          console.log("returned false");
+        } else {
+          console.log("returned true");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        switch (error.response.status) {
+          case 403:
+            setgetKeyMessage("Oops, something went wrong");
+          default:
+            break;
+        }
+      });
+    return true;
+  };
+
   //send request to target
   const requestToChannel = () => {
-    //props.chatStarted(true);
-
     if (validateKey(join_accessCode)) {
       console.log("join ");
       socket.emit("join_room", { user: props.userName, code: join_accessCode });
@@ -92,7 +121,8 @@ export default function AccessKey(props) {
   };
 
   //response to the requestor
-  const accpetRequest = () => {
+  const accpetRequest = (e) => {
+    console.log(e.currentTarget.value);
     console.log("send accpet  reponse" + accessCode);
     socket.emit("join_response", {
       room: `${accessCode}`,
@@ -102,33 +132,26 @@ export default function AccessKey(props) {
     props.chatStarted(accessCode);
   };
 
-  const declineRequest = () => {};
-
-  //Validate key from backend
-  const validateKey = (join_accessCode) => {
-    Axios.post(`${serverhost.url}/keyverify`, {
-      code: join_accessCode,
-    }).then((response) => {
-      console.log("valid");
-      console.log(response.data);
-      if (response.data.message != true) {
-        console.log("returned false");
-      } else {
-        console.log("returned true");
-      }
-    });
-    return true;
-  };
-
   //Gen random code from backend
   const getKey = () => {
-    Axios.post(`${serverhost.url}/keygen`, {
-      token: sessionStorage.getItem("token"),
-    }).then((response) => {
-      console.log(response.data.code);
-      setaccessCode(response.data.code);
-      startTimer();
-    });
+    Axios.post(`${serverhost.url}/keygen`, null, {
+      headers: {
+        "x-access-token": sessionStorage.getItem("token"),
+      },
+    })
+      .then((response) => {
+        console.log(response.data.code);
+        setaccessCode(response.data.code);
+        startTimer();
+      })
+      .catch((error) => {
+        switch (error.response.status) {
+          case 403:
+            setgetKeyMessage("Oops, something went wrong");
+          default:
+            break;
+        }
+      });
   };
 
   const startTimer = () => {
@@ -149,7 +172,6 @@ export default function AccessKey(props) {
   function closeModal() {
     setreceivedRequest(false);
   }
-  var subtitle;
 
   return (
     <div className="formContainer">
@@ -168,6 +190,7 @@ export default function AccessKey(props) {
               <h5>Code expired, please get a new code</h5>
             )}
           </div>
+          {getKeyMessage}
         </form>
         {expireCounter == 0 ? (
           <button className="buttonform" onClick={getKey}>
@@ -208,8 +231,12 @@ export default function AccessKey(props) {
           contentLabel="Example Modal"
         >
           <h2>You have received a chat request !</h2>
-          <button onClick={accpetRequest}>Accept</button>
-          <button onClick={closeModal}>Not now</button>
+          <button value="Accpeted" onClick={accpetRequest}>
+            Accept
+          </button>
+          <button value="Deny" onClick={closeModal}>
+            Not now
+          </button>
         </Modal>
       ) : null}
     </div>

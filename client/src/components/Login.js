@@ -18,7 +18,7 @@ export default function Login(props) {
         console.log(response.data);
         if (!response.data.auth) {
           setstatus("username/password incorrect");
-          console.log("username/password incorrect");
+          //console.log("username/password incorrect");
         } else {
           props.isAuth(true, usernameLogin);
           sessionStorage.setItem("token", response.data.token);

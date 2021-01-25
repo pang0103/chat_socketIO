@@ -16,18 +16,8 @@ const PORT = 3001;
 const server = app.listen(PORT, () => {
   console.log(` *********** server started at ${PORT}`);
 });
-console.log(process.env.JWT_SECRET);
 
-const activeSocketRoomKey = [
-  {
-    code: 555,
-    timestamp: 1610629164099,
-  },
-  {
-    code: 666,
-    timestamp: 1610629164099,
-  },
-];
+const activeSocketRoomKey = [];
 
 io = socket(server);
 
@@ -140,18 +130,15 @@ const genSocketRoomKey = () => {
 };
 
 app.post("/keygen", verifiyJWT, (req, res) => {
-  if (req.body.token == fakeToken) {
-    activeSocketRoomKey.push({
-      code: genSocketRoomKey(),
-      timestamp: parseInt(`${Date.now()}`),
-    });
-    console.log(activeSocketRoomKey);
-    console.log("Accpetd keygen request");
-    //console.log(activeSessionKey[0].code);
-    res.send({
-      code: activeSocketRoomKey[activeSocketRoomKey.length - 1].code,
-    });
-  }
+  activeSocketRoomKey.push({
+    code: genSocketRoomKey(),
+    timestamp: parseInt(`${Date.now()}`),
+  });
+  console.log(activeSocketRoomKey);
+  console.log("Accpetd keygen request");
+  res.send({
+    code: activeSocketRoomKey[activeSocketRoomKey.length - 1].code,
+  });
 });
 
 app.post("/chatrequest", (req, res) => {
@@ -178,5 +165,3 @@ app.post("/keyverify", (req, res) => {
     res.send({ message: false });
   }
 });
-
-//console.log(isValidKey(555)); // { name: 'cherries', quantity: 5 }
