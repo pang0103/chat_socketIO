@@ -4,7 +4,7 @@ const mysql = require("mysql");
 const cors = require("cors");
 const socket = require("socket.io");
 const jwt = require("jsonwebtoken");
-const { response } = require("express");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 app.use(express.json());
@@ -23,9 +23,11 @@ io = socket(server);
 
 io.on("connection", (socket) => {
   console.log(socket.id);
+  var userid;
 
   socket.on("join_room", (data) => {
     socket.join(data.code);
+    userid = data.user;
     console.log(data.user + " joinned room:" + data.code);
   });
 
@@ -49,7 +51,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("User disconnected");
+    console.log(userid + " has disconnected");
   });
 });
 
@@ -123,8 +125,6 @@ app.post("/login", (req, res) => {
   );
 });
 
-const fakeToken = "000";
-
 const genSocketRoomKey = () => {
   return Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
 };
@@ -132,10 +132,10 @@ const genSocketRoomKey = () => {
 app.post("/keygen", verifiyJWT, (req, res) => {
   activeSocketRoomKey.push({
     code: genSocketRoomKey(),
+    roomid: uuidv4(),
     timestamp: parseInt(`${Date.now()}`),
   });
   console.log(activeSocketRoomKey);
-  console.log("Accpetd keygen request");
   res.send({
     code: activeSocketRoomKey[activeSocketRoomKey.length - 1].code,
   });
@@ -160,6 +160,8 @@ function isValidKey(key) {
 app.post("/keyverify", (req, res) => {
   console.log("Key verification reqest on code: " + req.body.code);
   if (isValidKey(parseInt(req.body.code))) {
+    console.log("Key verify successful, returning room id to");
+
     res.send({ message: true });
   } else {
     res.send({ message: false });

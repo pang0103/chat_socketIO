@@ -3,53 +3,26 @@ import Axios from "axios";
 import { serverhost } from "../api/url";
 import io from "socket.io-client";
 import Modal from "react-modal";
-import axios from "axios";
 import { Redirect } from "react-router-dom";
+import CodeGenerator from "./CodeGenerator";
+
+import loading_icon from "../image/loading.gif";
 
 let socket;
 
 export default function AccessKey(props) {
-  const [accessID, setaccessID] = useState("");
   const [accessCode, setaccessCode] = useState("----");
 
-  const [expireCounter, setexpireCounter] = useState(0);
-
   const [join_accessCode, setjoin_accessCode] = useState("");
-
-  const [peerJoinrequest, setpeerJoinrequest] = useState(false);
 
   const [request_status_message, setrequest_status_message] = useState("");
   const [receivedRequest, setreceivedRequest] = useState(false);
 
-  const [getKeyMessage, setgetKeyMessage] = useState("");
-
-  const headers = {
-    "x-access-token": sessionStorage.getItem("token"),
-  };
-
-  // TO DO:
-  // move the socket instance to chatboard
-  // JOIN ! btn to check backend code valid, YES: set props.isJOin true and redirect to /Chatboard NO: false mesage
-  // and pass joincode to chatboard
-  // If
+  const [sendedRequest, setsendedRequest] = useState(false);
 
   useEffect(() => {
     socket = io(serverhost.url);
   }, [serverhost]);
-
-  useEffect(() => {
-    let unmounted = false;
-
-    expireCounter > 0 &&
-      setTimeout(() => {
-        if (!unmounted) {
-          setexpireCounter(expireCounter - 1);
-        }
-      }, 1000);
-    return () => {
-      unmounted = true;
-    };
-  }, [expireCounter]);
 
   //Join the socket room with access code
   useEffect(() => {
@@ -98,7 +71,7 @@ export default function AccessKey(props) {
         console.log(error);
         switch (error.response.status) {
           case 403:
-            setgetKeyMessage("Oops, something went wrong");
+            console.log("403 : ");
           default:
             break;
         }
@@ -108,8 +81,9 @@ export default function AccessKey(props) {
 
   //send request to target
   const requestToChannel = () => {
+    setsendedRequest(true);
+    console.log("setsendedRequest");
     if (validateKey(join_accessCode)) {
-      console.log("join ");
       socket.emit("join_room", { user: props.userName, code: join_accessCode });
       socket.emit("join_request", {
         room: `${join_accessCode}`,
@@ -132,30 +106,8 @@ export default function AccessKey(props) {
     props.chatStarted(accessCode);
   };
 
-  //Gen random code from backend
-  const getKey = () => {
-    Axios.post(`${serverhost.url}/keygen`, null, {
-      headers: {
-        "x-access-token": sessionStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        console.log(response.data.code);
-        setaccessCode(response.data.code);
-        startTimer();
-      })
-      .catch((error) => {
-        switch (error.response.status) {
-          case 403:
-            setgetKeyMessage("Oops, something went wrong");
-          default:
-            break;
-        }
-      });
-  };
-
-  const startTimer = () => {
-    setexpireCounter(60);
+  const setAccessCode = (code) => {
+    setaccessCode(code);
   };
 
   const customStyles = {
@@ -171,33 +123,12 @@ export default function AccessKey(props) {
 
   function closeModal() {
     setreceivedRequest(false);
+    setsendedRequest(false);
   }
 
   return (
     <div className="formContainer">
-      <div className="form">
-        <form style={{ border: "1px solid #1eaabd" }}>
-          <div className="container">
-            <p>{accessID}</p>
-            <div style={{ letterSpacing: "10px" }}>
-              <h1 style={expireCounter === 0 ? { color: "#DCDCDC" } : null}>
-                {accessCode}
-              </h1>
-            </div>
-            {expireCounter > 0 ? (
-              <h5>After {expireCounter} second, the code will expire</h5>
-            ) : (
-              <h5>Code expired, please get a new code</h5>
-            )}
-          </div>
-          {getKeyMessage}
-        </form>
-        {expireCounter == 0 ? (
-          <button className="buttonform" onClick={getKey}>
-            Get a new key
-          </button>
-        ) : null}
-      </div>
+      <CodeGenerator setaccessCode={setAccessCode} accessCode={accessCode} />
       <div className="form">
         <form style={{ border: "1px solid #1eaabd" }}>
           <div className="container">
@@ -236,6 +167,27 @@ export default function AccessKey(props) {
           </button>
           <button value="Deny" onClick={closeModal}>
             Not now
+          </button>
+        </Modal>
+      ) : null}
+      {sendedRequest ? (
+        <Modal
+          isOpen={sendedRequest}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+        >
+          <h2>You have sent a chat request !</h2>
+          <img
+            style={{
+              display: "block",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+            src={loading_icon}
+          />
+          <button value="Cancel" onClick={closeModal}>
+            Cancel
           </button>
         </Modal>
       ) : null}

@@ -17,7 +17,6 @@ export default function Register(props) {
         username: usernameReg,
         password: passwordReg,
       }).then((response) => {
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaa");
         setpagemessage("Registered !");
       });
     }
