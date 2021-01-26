@@ -37,8 +37,8 @@ function App() {
 
   const confirmJoinedroom = (channelCode) => {
     console.log("props.confirmJoinedroom" + channelCode);
-    setchatStart(true);
     setchatChannel(channelCode);
+    setchatStart(true);
   };
 
   const userAuthtemp = () => {

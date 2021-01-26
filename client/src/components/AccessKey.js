@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import Modal from "react-modal";
 import { Redirect } from "react-router-dom";
 import CodeGenerator from "./CodeGenerator";
+import CodeSubmitForm from "./CodeSubmitForm";
 
 import loading_icon from "../image/loading.gif";
 
@@ -15,7 +16,6 @@ export default function AccessKey(props) {
 
   const [join_accessCode, setjoin_accessCode] = useState("");
 
-  const [request_status_message, setrequest_status_message] = useState("");
   const [receivedRequest, setreceivedRequest] = useState(false);
 
   const [sendedRequest, setsendedRequest] = useState(false);
@@ -45,12 +45,16 @@ export default function AccessKey(props) {
     // this component again.
     socket.on("peer_response", (data) => {
       console.log(" There is a response from user :" + data);
+      console.log("************" + join_accessCode);
       if (data == "accepted") {
         props.chatStarted(join_accessCode);
       } else {
         console.log("Not a request");
       }
     });
+    return () => {
+      socket.off("peer_response");
+    };
   });
 
   //Validate key from backend
@@ -90,7 +94,8 @@ export default function AccessKey(props) {
         message: "request",
       });
     } else {
-      setrequest_status_message("Invalid access code");
+      console.log("Invalid access code");
+      //setrequest_status_message("Invalid access code");
     }
   };
 
@@ -108,6 +113,10 @@ export default function AccessKey(props) {
 
   const setAccessCode = (code) => {
     setaccessCode(code);
+  };
+
+  const setJoin_accessCode = (code) => {
+    setjoin_accessCode(code);
   };
 
   const customStyles = {
@@ -129,31 +138,10 @@ export default function AccessKey(props) {
   return (
     <div className="formContainer">
       <CodeGenerator setaccessCode={setAccessCode} accessCode={accessCode} />
-      <div className="form">
-        <form style={{ border: "1px solid #1eaabd" }}>
-          <div className="container">
-            <label htmlFor="Code"></label>
-            <h4>Access your peers chat channel</h4>
-            <input
-              type="text"
-              style={{ textAlign: "center", letterSpacing: "10px" }}
-              maxLength="4"
-              placeholder="your peers code"
-              onChange={(e) => {
-                if (e.target.value.length == 4) {
-                  setjoin_accessCode(e.target.value);
-                  console.log("AccessKey: " + e.target.value);
-                }
-              }}
-            />
-          </div>
-        </form>
-        <button className="buttonform " onClick={requestToChannel}>
-          {" "}
-          Join !{" "}
-        </button>
-        <h2>{request_status_message}</h2>
-      </div>
+      <CodeSubmitForm
+        setJoin_accessCode={setJoin_accessCode}
+        request={requestToChannel}
+      />
       {receivedRequest ? (
         <Modal
           isOpen={receivedRequest}
