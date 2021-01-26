@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom";
 import { serverhost } from "../api/url";
 import io from "socket.io-client";
 import "../css/chatboard.css";
-import e from "cors";
 
 let socket;
 
 export default function Chatboard(props) {
   const [message, setmessage] = useState("");
   const [messageList, setmessageList] = useState([]);
+  const [connetionStatus, setconnetionStatus] = useState("");
 
   const channel = props.channel;
   const username = props.userName;
@@ -37,6 +36,16 @@ export default function Chatboard(props) {
 
     return () => {
       socket.off("receive_message");
+    };
+  });
+
+  useEffect(() => {
+    socket.on("dcNotice", (data) => {
+      setconnetionStatus(data);
+    });
+
+    return () => {
+      socket.off("dcNotice");
     };
   });
 
@@ -76,14 +85,17 @@ export default function Chatboard(props) {
     return formattedTime;
   };
 
-  //useEffect() to join room first.
-
   return (
     <div className="board-body">
       <section className="msger">
         <header className="msger-header">
           <div className="msger-header-title">
-            <i className="fas fa-comment-alt" /> room ID: {channel}
+            <i className="fas fa-comment-alt" />
+            {connetionStatus == "" ? (
+              <div>Room ID: {channel}</div>
+            ) : (
+              <div style={{ color: "red" }}>{connetionStatus}</div>
+            )}
           </div>
           <div className="msger-header-options">
             <span>
@@ -111,6 +123,7 @@ export default function Chatboard(props) {
               </div>
             );
           })}
+          <p> asd</p>
         </main>
         <form onSubmit={sendMessage} className="msger-inputarea">
           <input
@@ -120,8 +133,14 @@ export default function Chatboard(props) {
             onChange={(e) => {
               setmessage(e.target.value);
             }}
+            disabled={connetionStatus == "" ? "" : "disabled"}
           />
-          <button className="msger-send-btn">Send</button>
+          <button
+            className="msger-send-btn"
+            disabled={connetionStatus == "" ? "" : "disabled"}
+          >
+            Send
+          </button>
         </form>
       </section>
     </div>

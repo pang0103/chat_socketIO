@@ -24,10 +24,12 @@ io = socket(server);
 io.on("connection", (socket) => {
   console.log(socket.id);
   var userid;
+  var roomid;
 
   socket.on("join_room", (data) => {
     socket.join(data.code);
     userid = data.user;
+    roomid = data.code;
     console.log(data.user + " joinned room:" + data.code);
   });
 
@@ -51,7 +53,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log(userid + " has disconnected");
+    console.log(userid + " has disconnected from " + roomid);
+    socket.to(roomid).emit("dcNotice", userid + " has disconnected");
   });
 });
 

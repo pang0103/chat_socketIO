@@ -28,7 +28,9 @@ export default function AccessKey(props) {
   //Join the socket room with access code
   useEffect(() => {
     console.log("Access Code chagned");
-    socket.emit("join_room", { user: props.userName, code: accessCode });
+    if (accessCode != "----") {
+      socket.emit("join_room", { user: props.userName, code: accessCode });
+    }
   }, [accessCode]);
 
   //listen to peer request
@@ -91,6 +93,7 @@ export default function AccessKey(props) {
 
   //response to the requestor
   const accpetRequest = (e) => {
+    closeModal();
     console.log("e. " + e.currentTarget.value);
     console.log("send accpet  reponse" + accessCode);
     socket.emit("join_response", {
