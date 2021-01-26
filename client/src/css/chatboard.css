@@ -75,6 +75,21 @@
   border-radius: 15px;
   background: var(--left-msg-bg);
 }
+.msg-bubble-typing {
+  max-width: 100px;
+  padding: 15px;
+  border-radius: 15px;
+  background: var(--left-msg-bg);
+}
+.msg-bubble-announcement {
+  margin: auto;
+  text-align: center;
+  max-width: 450px;
+  padding: 15px;
+  border-radius: 15px;
+  background: #c2c0c0;
+}
+
 .msg-info {
   display: flex;
   justify-content: space-between;

@@ -40,6 +40,10 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("receive_message", data.content);
   });
 
+  socket.on("userTyping", (data) => {
+    socket.to(roomid).emit("receive_userTyping", data);
+  });
+
   socket.on("join_request", (data) => {
     //console.log(data);
     socket.to(data.room).emit("peer_request", data.message);

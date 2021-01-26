@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { serverhost } from "../api/url";
 import io from "socket.io-client";
 import "../css/chatboard.css";
+import "../css/typingDot.css";
 
 let socket;
 
@@ -9,6 +10,7 @@ export default function Chatboard(props) {
   const [message, setmessage] = useState("");
   const [messageList, setmessageList] = useState([]);
   const [connetionStatus, setconnetionStatus] = useState("");
+  const [userTyping, setuserTyping] = useState(false);
 
   const channel = props.channel;
   const username = props.userName;
@@ -29,7 +31,7 @@ export default function Chatboard(props) {
   }, [channel]);
 
   useEffect(() => {
-    console.log("received message");
+    //console.log("received message");
     socket.on("receive_message", (data) => {
       setmessageList([...messageList, data]);
     });
@@ -50,8 +52,26 @@ export default function Chatboard(props) {
   });
 
   useEffect(() => {
+    socket.on("receive_userTyping", (data) => {
+      //console.log("eff" + data);
+      setuserTyping(true);
+    });
+
+    const interval = setInterval(() => {
+      setuserTyping(false);
+    }, 2000);
+
+    return () => {
+      socket.off("receive_userTyping");
+      //console.log("*********************************************");
+      clearInterval(interval);
+    };
+  });
+
+  useEffect(() => {
     scroll();
   }, [messageList]);
+
   const sendMessage = async (e) => {
     //prevent page refresh
     e.preventDefault();
@@ -69,6 +89,11 @@ export default function Chatboard(props) {
     setmessageList([...messageList, messageContent.content]);
     setmessage("");
     e.target.reset();
+  };
+
+  const sendTypingStatus = async () => {
+    //console.log("typing");
+    await socket.emit("userTyping", "is typing");
   };
 
   const displayTime = (stamp) => {
@@ -91,11 +116,8 @@ export default function Chatboard(props) {
         <header className="msger-header">
           <div className="msger-header-title">
             <i className="fas fa-comment-alt" />
-            {connetionStatus == "" ? (
-              <div>Room ID: {channel}</div>
-            ) : (
-              <div style={{ color: "red" }}>{connetionStatus}</div>
-            )}
+
+            <div>Room ID: {channel}</div>
           </div>
           <div className="msger-header-options">
             <span>
@@ -123,7 +145,16 @@ export default function Chatboard(props) {
               </div>
             );
           })}
-          <p> asd</p>
+          {userTyping ? (
+            <div className="msg-bubble-typing">
+              <div style={{ margin: "auto" }} class="dot-pulse"></div>
+            </div>
+          ) : null}
+          {connetionStatus == "" ? null : (
+            <div className="msg-bubble-announcement" style={{ color: "red" }}>
+              {connetionStatus}
+            </div>
+          )}
         </main>
         <form onSubmit={sendMessage} className="msger-inputarea">
           <input
@@ -132,6 +163,7 @@ export default function Chatboard(props) {
             placeholder="Enter your message..."
             onChange={(e) => {
               setmessage(e.target.value);
+              sendTypingStatus();
             }}
             disabled={connetionStatus == "" ? "" : "disabled"}
           />
