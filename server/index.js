@@ -157,13 +157,12 @@ function isValidKey(key) {
   }
 }
 
-app.post("/keyverify", (req, res) => {
+app.post("/keyverify", verifiyJWT, (req, res) => {
   console.log("Key verification reqest on code: " + req.body.code);
   if (isValidKey(parseInt(req.body.code))) {
     console.log("Key verify successful, returning room id to");
-
     res.send({ message: true });
   } else {
-    res.send({ message: false });
+    res.send({ message: "Invalid access code" });
   }
 });

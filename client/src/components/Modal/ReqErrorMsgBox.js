@@ -1,12 +1,10 @@
 import React, { useEffect } from "react";
 import Modal from "react-modal";
 
-export default function ReqReceiverMsgBox(props) {
+export default function ReqErrorMsgBox(props) {
   useEffect(() => {
     Modal.setAppElement("body");
   });
-
-  const rejectReq = () => {};
 
   return (
     <div>
@@ -16,17 +14,16 @@ export default function ReqReceiverMsgBox(props) {
         style={customStyles}
         contentLabel="Example Modal"
       >
-        <h2>You have received a chat request !</h2>
-        <button value="Accepted" onClick={props.response}>
-          Accept
-        </button>
-        <button value="Denied" onClick={props.response}>
-          Not now
+        <h2>Oops...</h2>
+        <h3>{props.message}</h3>
+        <button value="Cancel" onClick={props.close}>
+          Cancel
         </button>
       </Modal>
     </div>
   );
 }
+
 const customStyles = {
   content: {
     top: "50%",
