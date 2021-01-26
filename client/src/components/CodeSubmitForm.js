@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 export default function CodeSubmitForm(props) {
   const [request_status_message, setrequest_status_message] = useState("");
 
-  //send request to target
-
   return (
     <div>
       <div className="form">

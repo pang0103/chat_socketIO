@@ -1,18 +1,26 @@
 import React from "react";
 import Modal from "react-modal";
+import loading_icon from "../../image/loading.gif";
 
 export default function MessageBox(props) {
   return (
     <Modal
-      isOpen={receivedRequest}
-      onRequestClose={closeModal}
+      isOpen={props.active}
+      onRequestClose={props.close}
       style={customStyles}
       contentLabel="Example Modal"
     >
-      <h2>You have received a chat request !</h2>
-      <button value="Accpeted">Accept</button>
-      <button value="Deny" onClick={closeModal}>
-        Not now
+      <h2>You have sent a chat request !</h2>
+      <img
+        style={{
+          display: "block",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+        src={loading_icon}
+      />
+      <button value="Cancel" onClick={props.close}>
+        Cancel
       </button>
     </Modal>
   );

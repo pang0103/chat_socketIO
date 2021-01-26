@@ -6,8 +6,8 @@ import Modal from "react-modal";
 import { Redirect } from "react-router-dom";
 import CodeGenerator from "./CodeGenerator";
 import CodeSubmitForm from "./CodeSubmitForm";
-
-import loading_icon from "../image/loading.gif";
+import ReqSenderMsgBox from "./Modal/ReqSenderMsgBox";
+import ReqReceiverMsgBox from "./Modal/ReqReceiverMsgBox";
 
 let socket;
 
@@ -119,6 +119,11 @@ export default function AccessKey(props) {
     setjoin_accessCode(code);
   };
 
+  function closeModal() {
+    setreceivedRequest(false);
+    setsendedRequest(false);
+  }
+
   const customStyles = {
     content: {
       top: "50%",
@@ -130,11 +135,6 @@ export default function AccessKey(props) {
     },
   };
 
-  function closeModal() {
-    setreceivedRequest(false);
-    setsendedRequest(false);
-  }
-
   return (
     <div className="formContainer">
       <CodeGenerator setaccessCode={setAccessCode} accessCode={accessCode} />
@@ -142,43 +142,12 @@ export default function AccessKey(props) {
         setJoin_accessCode={setJoin_accessCode}
         request={requestToChannel}
       />
-      {receivedRequest ? (
-        <Modal
-          isOpen={receivedRequest}
-          onRequestClose={closeModal}
-          style={customStyles}
-          contentLabel="Example Modal"
-        >
-          <h2>You have received a chat request !</h2>
-          <button value="Accpeted" onClick={accpetRequest}>
-            Accept
-          </button>
-          <button value="Deny" onClick={closeModal}>
-            Not now
-          </button>
-        </Modal>
-      ) : null}
-      {sendedRequest ? (
-        <Modal
-          isOpen={sendedRequest}
-          onRequestClose={closeModal}
-          style={customStyles}
-          contentLabel="Example Modal"
-        >
-          <h2>You have sent a chat request !</h2>
-          <img
-            style={{
-              display: "block",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-            src={loading_icon}
-          />
-          <button value="Cancel" onClick={closeModal}>
-            Cancel
-          </button>
-        </Modal>
-      ) : null}
+      <ReqReceiverMsgBox
+        active={receivedRequest}
+        close={closeModal}
+        response={accpetRequest}
+      />
+      <ReqSenderMsgBox active={sendedRequest} close={closeModal} />
     </div>
   );
 }
