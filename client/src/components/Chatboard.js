@@ -15,13 +15,14 @@ export default function Chatboard(props) {
   const channel = props.channel;
   const username = props.userName;
 
-  const scroll = () => {
-    let chat = document.getElementById("msger-chat");
-    chat.scrollTop += 500;
-  };
-
   useEffect(() => {
     socket = io(serverhost.url);
+  }, [serverhost]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", (ev) => {
+      ev.returnValue = "Are you sure ?";
+    });
   }, [serverhost]);
 
   useEffect(() => {
@@ -68,6 +69,11 @@ export default function Chatboard(props) {
     };
   });
 
+  const scroll = () => {
+    let chat = document.getElementById("msger-chat");
+    chat.scrollTop += 500;
+  };
+
   useEffect(() => {
     scroll();
   }, [messageList]);
@@ -75,20 +81,22 @@ export default function Chatboard(props) {
   const sendMessage = async (e) => {
     //prevent page refresh
     e.preventDefault();
-    let messageContent = {
-      room: channel,
-      content: {
-        author: username,
-        message: message,
-        timestamp: `${new Date()}`,
-        //timestamp: `${Date.now()}`,
-      },
-    };
+    //console.log(e.target.value);
+    if (message !== "") {
+      let messageContent = {
+        room: channel,
+        content: {
+          author: username,
+          message: message,
+          timestamp: `${new Date()}`,
+        },
+      };
 
-    await socket.emit("send_message", messageContent);
-    setmessageList([...messageList, messageContent.content]);
-    setmessage("");
-    e.target.reset();
+      await socket.emit("send_message", messageContent);
+      setmessageList([...messageList, messageContent.content]);
+      setmessage("");
+      e.target.reset();
+    }
   };
 
   const sendTypingStatus = async () => {
@@ -111,7 +119,7 @@ export default function Chatboard(props) {
   };
 
   return (
-    <div className="board-body">
+    <div className="board-body" onbeforeunload="return myFunction()">
       <section className="msger">
         <header className="msger-header">
           <div className="msger-header-title">
