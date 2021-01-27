@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Axios from "axios";
 import { serverhost } from "../api/url";
-import "../css/register.css";
+//import "../css/register.css";
+import styles from "../css/signInOut.module.css";
 
 export default function Register(props) {
   const [usernameReg, setusernameReg] = useState("");
@@ -23,52 +24,65 @@ export default function Register(props) {
   };
 
   return (
-    <div className="form">
-      <form style={{ border: "1px solid #1eaabd" }} onSubmit={register}>
-        <div className="container fillinform">
-          <h1>Sign Up</h1>
-          <p>Please fill in this form to create an account.</p>
-          <hr />
-          <label htmlFor="email">
-            <b>Username</b>
-          </label>
-          <input
-            type="text"
-            placeholder="Enter username"
-            onChange={(e) => {
-              setusernameReg(e.target.value);
-            }}
-            required
-          />
-          <label htmlFor="pwd">
-            <b>Password</b>
-          </label>
-          <input
-            type="password"
-            placeholder="Enter Password"
-            onChange={(e) => {
-              setpasswordReg(e.target.value);
-            }}
-            required
-          />
-          <label htmlFor="pwd-repeat">
-            <b>Repeat Password</b>
-          </label>
-          <input type="password" placeholder="Repeat Password" required />
-          <p>
-            By creating an account you agree to our{" "}
-            <a href="#" style={{ color: "dodgerblue" }}>
-              Terms &amp; Privacy
-            </a>
-            .
-          </p>
-          <p>
-            Already have a account ?<a href="/login"> Login here</a>
-          </p>
-          <h4>{pagemessage}</h4>
-          <input className="signupbtn buttonform" type="submit"></input>
+    <div className={styles.loginPage}>
+      <div className={`${styles.wrapper} ${styles.fadeInDown}`}>
+        <div className={styles.formContent}>
+          {/* Tabs Titles */}
+          <h2 className={styles.active}>sign up</h2>
+
+          {/* Register Form */}
+          <form onSubmit={register}>
+            <label for="username">User name :</label>
+            <input
+              type="text"
+              placeholder="username"
+              name="username"
+              onChange={(e) => {
+                setusernameReg(e.target.value);
+              }}
+              required
+            />
+            <label for="password">Password :</label>
+            <input
+              type="password"
+              placeholder="password"
+              name="password"
+              required
+              onChange={(e) => {
+                setpasswordReg(e.target.value);
+              }}
+            />
+            <label for="password">Repeat Password :</label>
+            <input
+              type="password"
+              placeholder="Repeat Password"
+              name="password"
+              required
+            />
+            <input type="submit" defaultValue="Log In" />
+            <h4 style={{ color: "red", marginbottom: "10px" }}></h4>
+          </form>
+          {/* Remind Passowrd */}
+
+          <div className={styles.formFooter}>
+            {pagemessage === "" ? (
+              <div>
+                Already have a account ?{" "}
+                <a className={styles.underlineHover} href="/login">
+                  Login here
+                </a>
+              </div>
+            ) : (
+              <div style={{ color: "green" }}>
+                <b>{pagemessage} </b>
+                <a className={styles.underlineHover} href="/login">
+                  Login here
+                </a>
+              </div>
+            )}
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

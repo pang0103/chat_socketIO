@@ -86,8 +86,6 @@ function App() {
           component={Profile}
         />
       </Router>
-
-      {isAuth ? <button onClick={userAuthtemp}> Authed ?</button> : null}
     </div>
   );
 }

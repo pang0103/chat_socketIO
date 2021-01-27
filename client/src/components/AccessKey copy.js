@@ -7,7 +7,6 @@ import CodeSubmitForm from "./CodeSubmitForm";
 import ReqSenderMsgBox from "./Modal/ReqSenderMsgBox";
 import ReqReceiverMsgBox from "./Modal/ReqReceiverMsgBox";
 import ReqErrorMsgBox from "./Modal/ReqErrorMsgBox";
-import styles from "../css/dashboard.module.css";
 
 let socket;
 
@@ -122,30 +121,27 @@ export default function AccessKey(props) {
   }
 
   return (
-    <div className={styles.mainPage}>
-      <div className={styles.mainContainer}>
-        <CodeGenerator setaccessCode={setAccessCode} accessCode={accessCode} />
-        <CodeSubmitForm
-          setJoin_accessCode={setJoin_accessCode}
-          request={requestToChannel2}
-        />
-
-        <ReqReceiverMsgBox
-          active={receivedRequest}
-          close={closeModal}
-          response={accpetRequest}
-        />
-        <ReqSenderMsgBox
-          active={sendedRequest}
-          close={closeModal}
-          response={peerReponse}
-        />
-        <ReqErrorMsgBox
-          active={IsRequestErr}
-          close={closeModal}
-          message={RequestErrMsg}
-        />
-      </div>
+    <div className="formContainer">
+      <CodeGenerator setaccessCode={setAccessCode} accessCode={accessCode} />
+      <CodeSubmitForm
+        setJoin_accessCode={setJoin_accessCode}
+        request={requestToChannel2}
+      />
+      <ReqReceiverMsgBox
+        active={receivedRequest}
+        close={closeModal}
+        response={accpetRequest}
+      />
+      <ReqSenderMsgBox
+        active={sendedRequest}
+        close={closeModal}
+        response={peerReponse}
+      />
+      <ReqErrorMsgBox
+        active={IsRequestErr}
+        close={closeModal}
+        message={RequestErrMsg}
+      />
     </div>
   );
 }

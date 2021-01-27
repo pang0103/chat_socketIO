@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Axios from "axios";
 import { serverhost } from "../api/url";
+import styles from "../css/signInOut.module.css";
+import chat_logo from "../image/chat_logo.svg";
 
 export default function Login(props) {
   const [usernameLogin, setusernameLogin] = useState("");
@@ -30,42 +32,51 @@ export default function Login(props) {
   };
 
   return (
-    <div className="form">
-      <form style={{ border: "1px solid #1eaabd" }} onSubmit={login}>
-        <div className="container fillinform">
-          <h1>Login</h1>
-          <hr />
-          <label htmlFor="email">
-            <b>User name</b>
-          </label>
-          <input
-            type="text"
-            placeholder="Enter username"
-            name="username"
-            onChange={(e) => {
-              setusernameLogin(e.target.value);
-            }}
-            required
-          />
-          <label htmlFor="psw">
-            <b>Password</b>
-          </label>
-          <input
-            type="password"
-            placeholder="Enter Password"
-            name="password"
-            onChange={(e) => {
-              setpasswordLogin(e.target.value);
-            }}
-            required
-          />
-          <p>
-            Do not have a account ?<a href="/register"> Register here</a>
-          </p>
-          <h4 style={{ color: "red" }}>{status}</h4>
-          <input className="signupbtn buttonform" type="submit"></input>
+    <div className={styles.loginPage}>
+      <div className={`${styles.wrapper} ${styles.fadeInDown}`}>
+        <div className={styles.formContent}>
+          {/* Tabs Titles */}
+          <h2 className={styles.active}>Sign In</h2>
+          {/* Icon */}
+          <div className={`${styles.fadeIn} ${styles.first}`}>
+            <img src={chat_logo} className={styles.icon} />
+          </div>
+          {/* Login Form */}
+          <form onSubmit={login}>
+            <input
+              type="text"
+              className={`${styles.fadeIn} ${styles.second}`}
+              placeholder="username"
+              onChange={(e) => {
+                setusernameLogin(e.target.value);
+              }}
+              required
+            />
+            <input
+              type="password"
+              className={`${styles.fadeIn} ${styles.third}`}
+              placeholder="password"
+              name="password"
+              onChange={(e) => {
+                setpasswordLogin(e.target.value);
+              }}
+              required
+            />
+            <input
+              type="submit"
+              className={`${styles.fadeIn} ${styles.fourth}`}
+              defaultValue="Log In"
+            />
+            <h4 style={{ color: "red", marginbottom: "10px" }}>{status}</h4>
+          </form>
+          {/* Remind Passowrd */}
+          <div className={styles.formFooter}>
+            <a className={styles.underlineHover} href="/register">
+              Register here !
+            </a>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

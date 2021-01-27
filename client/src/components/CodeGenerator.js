@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { serverhost } from "../api/url";
+import styles from "../css/dashboard.module.css";
+import styles2 from "../css/signInOut.module.css";
 
 export default function CodeGenerator(props) {
   const [expireCounter, setexpireCounter] = useState(0);
@@ -47,28 +49,33 @@ export default function CodeGenerator(props) {
 
   return (
     <div>
-      <div className="form">
-        <form style={{ border: "1px solid #1eaabd" }}>
-          <div className="container">
-            <div style={{ letterSpacing: "10px" }}>
-              <h1 style={expireCounter === 0 ? { color: "#DCDCDC" } : null}>
-                {props.accessCode}
-              </h1>
+      <div
+        className={`${styles2.wrapper} ${styles2.fadeInDown} ${styles.first}`}
+      >
+        <div className={styles2.formContent}>
+          <form>
+            <div>
+              <div style={{ letterSpacing: "10px" }}>
+                <h1 style={expireCounter === 0 ? { color: "#DCDCDC" } : null}>
+                  {props.accessCode}
+                </h1>
+              </div>
+              {expireCounter > 0 ? (
+                <h5>After {expireCounter} second, the code will expire</h5>
+              ) : (
+                <h5>Code expired, please get a new code</h5>
+              )}
             </div>
-            {expireCounter > 0 ? (
-              <h5>After {expireCounter} second, the code will expire</h5>
-            ) : (
-              <h5>Code expired, please get a new code</h5>
-            )}
-          </div>
-          {getKeyMessage}
-        </form>
-        {expireCounter == 0 ? (
-          <button className="buttonform" onClick={getKey}>
-            Get a new key
-          </button>
-        ) : null}
+            {getKeyMessage}
+          </form>
+          {expireCounter == 0 ? (
+            <button className="buttonform" onClick={getKey}>
+              Get a new key
+            </button>
+          ) : null}
+        </div>
       </div>
+      <div className={styles.codeGeneratorCard}></div>
     </div>
   );
 }
