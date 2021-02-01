@@ -1,10 +1,10 @@
 require("dotenv").config();
 const express = require("express");
-const mysql = require("mysql");
 const cors = require("cors");
 const socket = require("socket.io");
-const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = require("uuid");
+
+const authRoutes = require("./routes/authRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 const app = express();
 app.use(express.json());
@@ -16,8 +16,6 @@ const PORT = 3001;
 const server = app.listen(PORT, () => {
   console.log(` *********** server started at ${PORT}`);
 });
-
-const activeSocketRoomKey = [];
 
 io = socket(server);
 
@@ -62,114 +60,6 @@ io.on("connection", (socket) => {
   });
 });
 
-const db = mysql.createConnection({
-  user: "root",
-  password: "password",
-  host: "localhost",
-  database: "db_uat",
-});
+app.use(authRoutes);
 
-app.post("/register", (req, res) => {
-  console.log(req.body);
-  const username = req.body.username;
-  const password = req.body.password;
-
-  db.query(
-    "INSERT INTO users(user_name,PASSWORD) VALUES(?,?)",
-    [username, password],
-    (err, result) => {
-      if (err) {
-        console.log("err: " + err);
-      } else {
-        res.send({ message: "registered" });
-      }
-    }
-  );
-});
-
-const verifiyJWT = (req, res, next) => {
-  const token = req.headers["x-access-token"];
-  if (!token) {
-    res.sendStatus(403);
-  } else {
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-        res.sendStatus(403);
-      } else {
-        req.userId = decoded.id;
-        next();
-      }
-    });
-  }
-};
-
-app.get("/isUserAuth", verifiyJWT, (req, res) => {
-  res.send("YO ! you are authenticated");
-});
-
-app.post("/login", (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-
-  db.query(
-    "SELECT * FROM users WHERE user_name= ? AND password=?",
-    [username, password],
-    (err, result) => {
-      if (err) {
-        console.log("err: " + err);
-      } else if (result.length > 0) {
-        const id = result[0].id;
-        const token = jwt.sign({ id }, process.env.JWT_SECRET, {
-          expiresIn: 3000,
-        });
-        console.log("result: " + result);
-        res.json({ auth: true, token: token, result: result });
-      } else if (result.length == 0) {
-        console.log("user login attempt fail");
-        res.json({ auth: false, message: "Login attempt fail" });
-      }
-    }
-  );
-});
-
-const genSocketRoomKey = () => {
-  return Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
-};
-
-app.post("/keygen", verifiyJWT, (req, res) => {
-  activeSocketRoomKey.push({
-    code: genSocketRoomKey(),
-    roomid: uuidv4(),
-    timestamp: parseInt(`${Date.now()}`),
-  });
-  console.log(activeSocketRoomKey);
-  res.send({
-    code: activeSocketRoomKey[activeSocketRoomKey.length - 1].code,
-  });
-});
-
-app.post("/chatrequest", (req, res) => {
-  if (req.body.code == "555") {
-    res.send({ message: "accepted" });
-  }
-});
-
-function isValidKey(key) {
-  const ts = activeSocketRoomKey.find(({ code }) => code === key);
-  //60s expire time
-  if (ts == undefined || Date.now() - ts.timestamp > 60000) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-app.post("/keyverify", verifiyJWT, (req, res) => {
-  console.log("Key verification reqest on code: " + req.body.code);
-  if (isValidKey(parseInt(req.body.code))) {
-    console.log("Key verify successful, returning room id to");
-    res.send({ message: true });
-  } else {
-    res.send({ message: "Invalid access code" });
-  }
-});
+app.use(chatRoutes);
