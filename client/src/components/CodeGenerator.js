@@ -68,11 +68,21 @@ export default function CodeGenerator(props) {
             </div>
             {getKeyMessage}
           </form>
-          {expireCounter == 0 ? (
-            <button className="buttonform" onClick={getKey}>
-              Get a new key
-            </button>
-          ) : null}
+
+          <button
+            className={styles2.button}
+            style={
+              expireCounter !== 0
+                ? {
+                    backgroundColor: "grey",
+                  }
+                : null
+            }
+            onClick={getKey}
+            disabled={expireCounter !== 0}
+          >
+            Get a new key
+          </button>
         </div>
       </div>
       <div className={styles.codeGeneratorCard}></div>

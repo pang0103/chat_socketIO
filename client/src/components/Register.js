@@ -28,12 +28,15 @@ export default function Register(props) {
       <div className={`${styles.wrapper} ${styles.fadeInDown}`}>
         <div className={styles.formContent}>
           {/* Tabs Titles */}
-          <h2 className={styles.active}>sign up</h2>
+          <h2 className={`${styles.active}`}>sign up</h2>
 
           {/* Register Form */}
           <form onSubmit={register}>
-            <label for="username">User name :</label>
+            <label className={styles.label} for="username">
+              User name :
+            </label>
             <input
+              className={styles.input}
               type="text"
               placeholder="username"
               name="username"
@@ -42,8 +45,11 @@ export default function Register(props) {
               }}
               required
             />
-            <label for="password">Password :</label>
+            <label className={styles.label} for="password">
+              Password :
+            </label>
             <input
+              className={styles.input}
               type="password"
               placeholder="password"
               name="password"
@@ -52,14 +58,21 @@ export default function Register(props) {
                 setpasswordReg(e.target.value);
               }}
             />
-            <label for="password">Repeat Password :</label>
+            <label className={styles.label} for="password">
+              Repeat Password :
+            </label>
             <input
+              className={styles.input}
               type="password"
               placeholder="Repeat Password"
               name="password"
               required
             />
-            <input type="submit" defaultValue="Log In" />
+            <input
+              className={styles.input}
+              type="submit"
+              defaultValue="Log In"
+            />
             <h4 style={{ color: "red", marginbottom: "10px" }}></h4>
           </form>
           {/* Remind Passowrd */}

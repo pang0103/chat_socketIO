@@ -119,7 +119,7 @@ export default function Chatboard(props) {
   };
 
   return (
-    <div className="board-body" onbeforeunload="return myFunction()">
+    <div className="board-body">
       <section className="msger">
         <header className="msger-header">
           <div className="msger-header-title">
@@ -155,7 +155,7 @@ export default function Chatboard(props) {
           })}
           {userTyping ? (
             <div className="msg-bubble-typing">
-              <div style={{ margin: "auto" }} class="dot-pulse"></div>
+              <div style={{ margin: "auto" }} className="dot-pulse"></div>
             </div>
           ) : null}
           {connetionStatus == "" ? null : (

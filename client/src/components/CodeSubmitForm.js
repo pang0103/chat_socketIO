@@ -11,10 +11,17 @@ export default function CodeSubmitForm(props) {
           <form>
             <div className="container">
               <label htmlFor="Code"></label>
-              <h4>Access your peers chat channel</h4>
+              <h4 style={{ marginBottom: "20px", marginTop: "20px" }}>
+                Access your peers chat channel
+              </h4>
               <input
+                className={styles.input}
                 type="text"
-                style={{ textAlign: "center", letterSpacing: "10px" }}
+                style={{
+                  textAlign: "center",
+                  letterSpacing: "10px",
+                  margin: "10px",
+                }}
                 maxLength="4"
                 placeholder="your peers code"
                 onChange={(e) => {
@@ -26,7 +33,7 @@ export default function CodeSubmitForm(props) {
               />
             </div>
           </form>
-          <button className="buttonform " onClick={props.request}>
+          <button className={styles.button} onClick={props.request}>
             {" "}
             Join !{" "}
           </button>

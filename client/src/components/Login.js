@@ -45,7 +45,7 @@ export default function Login(props) {
           <form onSubmit={login}>
             <input
               type="text"
-              className={`${styles.fadeIn} ${styles.second}`}
+              className={`${styles.input} ${styles.fadeIn} ${styles.second}`}
               placeholder="username"
               onChange={(e) => {
                 setusernameLogin(e.target.value);
@@ -54,7 +54,7 @@ export default function Login(props) {
             />
             <input
               type="password"
-              className={`${styles.fadeIn} ${styles.third}`}
+              className={`${styles.input} ${styles.fadeIn} ${styles.third}`}
               placeholder="password"
               name="password"
               onChange={(e) => {
@@ -64,7 +64,7 @@ export default function Login(props) {
             />
             <input
               type="submit"
-              className={`${styles.fadeIn} ${styles.fourth}`}
+              className={`${styles.input} ${styles.fadeIn} ${styles.fourth}`}
               defaultValue="Log In"
             />
             <h4 style={{ color: "red", marginbottom: "10px" }}>{status}</h4>
