@@ -27,12 +27,11 @@ export default function Chatboard(props) {
 
   useEffect(() => {
     //socket.emit("join_room", props.channel);
-    console.log("join_rom" + { user: props.userName, code: channel });
-    socket.emit("join_room", { user: props.userName, code: channel });
+    console.log("chatRoom_join" + { user: props.userName, code: channel });
+    socket.emit("chatRoom_join", { user: props.userName, code: channel });
   }, [channel]);
 
   useEffect(() => {
-    //console.log("received message");
     socket.on("receive_message", (data) => {
       setmessageList([...messageList, data]);
     });

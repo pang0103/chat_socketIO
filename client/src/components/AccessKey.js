@@ -22,23 +22,33 @@ export default function AccessKey(props) {
   //peer reponse
   const [peerReponse, setpeerReponse] = useState(false);
 
+  //
+
+  const [userQueue, setuserQueue] = useState([]);
+
   useEffect(() => {
     socket = io(serverhost.url);
   }, [serverhost]);
 
-  //Join the socket room with access code
+  //Join the socket lobby with access code
   useEffect(() => {
-    console.log("Access Code chagned");
+    console.log("Access Code change");
     if (accessCode != "----") {
-      socket.emit("join_room", { user: props.userName, code: accessCode });
+      socket.emit("lobby_join", { user: props.userName, code: accessCode });
     }
   }, [accessCode]);
 
   //listen to peer request
   useEffect(() => {
     socket.on("peer_request", (data) => {
-      console.log(" There is a request from user " + data);
+      console.log(data);
+      console.log(" There is a request from user :" + data.user);
+      let peerInfo = {
+        userid: "#test",
+        username: data.user,
+      };
       setreceivedRequest(true);
+      setuserQueue([...userQueue, peerInfo]);
     });
     return () => {
       socket.off("peer_request");
@@ -49,7 +59,7 @@ export default function AccessKey(props) {
   useEffect(() => {
     socket.on("peer_response", (data) => {
       console.log(" There is a response from user :" + data);
-      console.log("************" + join_accessCode);
+      console.log("************" + join_accessCode + "************");
       if (data == "Accepted") {
         props.chatStarted(join_accessCode);
       } else {
@@ -62,7 +72,7 @@ export default function AccessKey(props) {
     };
   });
 
-  const requestToChannel2 = () => {
+  const requestToLobby = () => {
     //ValidateAccessCode
     Axios.post(
       `${serverhost.url}/keyverify`,
@@ -80,19 +90,21 @@ export default function AccessKey(props) {
         setRequestErrMsg(response.data.message);
       } else {
         setsendedRequest(true);
-        socket.emit("join_room", {
+        socket.emit("lobby_join", {
           user: props.userName,
+          // tag
           code: join_accessCode,
         });
         socket.emit("join_request", {
           room: `${join_accessCode}`,
+          user: props.userName,
           message: "request",
         });
       }
     });
   };
 
-  //response to the requestor
+  //response to the requestor / start the lobby
   const accpetRequest = (e) => {
     closeModal();
     console.log("e. " + e.currentTarget.value);
@@ -127,13 +139,13 @@ export default function AccessKey(props) {
         <CodeGenerator setaccessCode={setAccessCode} accessCode={accessCode} />
         <CodeSubmitForm
           setJoin_accessCode={setJoin_accessCode}
-          request={requestToChannel2}
+          request={requestToLobby}
         />
-
         <ReqReceiverMsgBox
           active={receivedRequest}
           close={closeModal}
           response={accpetRequest}
+          userList={userQueue}
         />
         <ReqSenderMsgBox
           active={sendedRequest}

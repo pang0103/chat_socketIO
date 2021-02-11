@@ -1,28 +1,41 @@
 import React, { useEffect } from "react";
 import Modal from "react-modal";
+import Lobby from "./Lobby";
+import styles from "../../css/modalmsg.module.css";
 
 export default function ReqReceiverMsgBox(props) {
   useEffect(() => {
     Modal.setAppElement("body");
   });
 
-  const rejectReq = () => {};
-
   return (
-    <div>
+    <div className={styles.mainModal}>
       <Modal
         isOpen={props.active}
         onRequestClose={props.close}
         style={customStyles}
         contentLabel="Example Modal"
       >
-        <h2>You have received a chat request !</h2>
-        <button value="Accepted" onClick={props.response}>
-          Accept
-        </button>
-        <button value="Denied" onClick={props.response}>
-          Not now
-        </button>
+        <h2 className={styles.Noticebar}>You have received a chat request !</h2>
+        <hr></hr>
+        <Lobby userlist={props.userList} />
+        <hr></hr>
+        <div className={styles.btnplace}>
+          <button
+            className={styles.acceptebtn}
+            value="Accepted"
+            onClick={props.response}
+          >
+            Accept
+          </button>
+          <button
+            className={styles.denybtn}
+            value="Denied"
+            onClick={props.response}
+          >
+            Not now
+          </button>
+        </div>
       </Modal>
     </div>
   );

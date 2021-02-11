@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const server = app.listen(PORT, () => {
   console.log(` *********** server started at ${PORT}`);
@@ -24,11 +24,36 @@ io.on("connection", (socket) => {
   var userid;
   var roomid;
 
-  socket.on("join_room", (data) => {
+  var lobbyID;
+  var userName;
+
+  // Lobby
+  socket.on("lobby_join", (data) => {
+    socket.join(data.code);
+    console.log(data.user + " has join the lobby : " + data.code);
+  });
+
+  socket.on("join_request", (data) => {
+    //console.log(data);
+    socket.to(data.room).emit("peer_request", data);
+    console.log("FROM : " + data.user + " sent a join request " + data.message);
+  });
+
+  socket.on("join_response", (data) => {
+    socket.to(data.room).emit("peer_response", data.message);
+    console.log("A response send from User to " + data.message);
+  });
+
+  socket.on("lobby_start", (data) => {});
+
+  socket.on("lobby_dismiss", (data) => {});
+
+  //Chatroom
+  socket.on("chatRoom_join", (data) => {
     socket.join(data.code);
     userid = data.user;
     roomid = data.code;
-    console.log(data.user + " joinned room:" + data.code);
+    console.log(data.user + " joinned chatroom:" + data.code);
   });
 
   socket.on("send_message", (data) => {
@@ -42,18 +67,7 @@ io.on("connection", (socket) => {
     socket.to(roomid).emit("receive_userTyping", data);
   });
 
-  socket.on("join_request", (data) => {
-    //console.log(data);
-    socket.to(data.room).emit("peer_request", data.message);
-
-    console.log("A request send from User to " + data.message);
-  });
-
-  socket.on("join_response", (data) => {
-    socket.to(data.room).emit("peer_response", data.message);
-    console.log("A response send from User to " + data.message);
-  });
-
+  //DC
   socket.on("disconnect", () => {
     console.log(userid + " has disconnected from " + roomid);
     socket.to(roomid).emit("dcNotice", userid + " has disconnected");
