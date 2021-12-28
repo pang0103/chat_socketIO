@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  chat_web:
+    build:
+      context: ./client
+      dockerfile: dev.Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client:/app
+
+  chat_backend:
+    build:
+      context: ./server
+      dockerfile: dev.Dockerfile
+    ports:
+      - 3001:3001
+    volumes:
+      - ./server:/app
+    environment:
+      - DB_HOST=chat_db
+    depends_on:
+      - chat_db
+
+  chat_db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=socketchat
+    ports:
+      - 3306:3306
+    volumes:
+      - chat_db_vol:/var/lib/mysql
+      - ./db/sqls:/docker-entrypoint-initdb.d # Note that the sql ONLY execute when there are no database data in the volume
+
+volumes:
+  chat_db_vol:
