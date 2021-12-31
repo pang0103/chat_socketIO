@@ -5,10 +5,10 @@ const mysql = require("mysql");
 const router = express.Router();
 
 const db = mysql.createConnection({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  database: "socketchat",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "password",
+  host: process.env.DB_HOST || "localhost:3306",
+  database: process.env.DB_DB || "socketchat",
 });
 
 router.post("/register", (req, res) => {

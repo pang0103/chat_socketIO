@@ -9,6 +9,7 @@ services:
       - 3000:3000
     volumes:
       - ./client:/app
+      - /app/node_modules
 
   chat_backend:
     build:
@@ -18,8 +19,13 @@ services:
       - 3001:3001
     volumes:
       - ./server:/app
+      - /app/node_modules
     environment:
       - DB_HOST=chat_db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_DB=socketchat
+      - JWT_SECRET=dummysecret
     depends_on:
       - chat_db
 
