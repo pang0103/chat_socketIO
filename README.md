@@ -1,6 +1,6 @@
 # chat_socketIO
 
-built while learning React/ Express/ Docker
+built while learning React/ Express/ Docker/ Nginx
 
 ## Installation
 
