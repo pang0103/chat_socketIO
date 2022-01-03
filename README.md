@@ -7,5 +7,5 @@ built while learning React/ Express/ Docker/ Nginx
 docker-compose to start dev environment
 
 ```bash
-docker-compose up
+docker-compose up -f docker-compose.dev.yml
 ```
