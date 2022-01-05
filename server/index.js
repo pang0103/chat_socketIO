@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const socket = require("socket.io");
 
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
@@ -17,7 +16,9 @@ const server = app.listen(PORT, () => {
   console.log(` *********** server started at ${PORT}`);
 });
 
-io = socket(server);
+const io = require("socket.io")(server, {
+  path: "/socketio",
+});
 
 io.on("connection", (socket) => {
   console.log(socket.id);
@@ -57,9 +58,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_message", (data) => {
-    console.log(
-      "**** " + data.content.author + " SENT " + data.content.message
-    );
+    console.log("**** " + data.content.author + " SENT " + data.content.message);
     socket.to(data.room).emit("receive_message", data.content);
   });
 

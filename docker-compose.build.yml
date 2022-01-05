@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  chat-web:
+    image: chakpang01/chat-web:0.0.3
+    ports:
+      - 80:80
+    depends_on:
+      - chat-api
+    environment:
+      - REACT_APP_API_ENDPOINT=localhost:3001 #
+
+  chat-api:
+    image: chakpang01/chat-backend:0.0.1
+    ports:
+      - 3001:3001
+    environment:
+      - DB_HOST=chat_db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_DB=socketchat
+      - JWT_SECRET=dummysecret
+    depends_on:
+      - chat_db
+
+  chat_db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=socketchat
+    ports:
+      - 3306:3306
+    volumes:
+      - chat_db_vol_1:/var/lib/mysql
+      - ./db/sqls:/docker-entrypoint-initdb.d
+
+volumes:
+  chat_db_vol_1:

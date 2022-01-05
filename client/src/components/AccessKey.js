@@ -27,7 +27,10 @@ export default function AccessKey(props) {
   const [userQueue, setuserQueue] = useState([]);
 
   useEffect(() => {
-    socket = io(serverhost.url);
+    socket = io(serverhost.server_end_point, {
+      path: "/socketio",
+    });
+    console.log(socket);
   }, [serverhost]);
 
   //Join the socket lobby with access code
@@ -75,7 +78,7 @@ export default function AccessKey(props) {
   const requestToLobby = () => {
     //ValidateAccessCode
     Axios.post(
-      `${serverhost.url}/keyverify`,
+      `${serverhost.api_endpoint}/keyverify`,
       {
         code: join_accessCode,
       },
@@ -137,26 +140,15 @@ export default function AccessKey(props) {
     <div className={styles.mainPage}>
       <div className={styles.mainContainer}>
         <CodeGenerator setaccessCode={setAccessCode} accessCode={accessCode} />
-        <CodeSubmitForm
-          setJoin_accessCode={setJoin_accessCode}
-          request={requestToLobby}
-        />
+        <CodeSubmitForm setJoin_accessCode={setJoin_accessCode} request={requestToLobby} />
         <ReqReceiverMsgBox
           active={receivedRequest}
           close={closeModal}
           response={accpetRequest}
           userList={userQueue}
         />
-        <ReqSenderMsgBox
-          active={sendedRequest}
-          close={closeModal}
-          response={peerReponse}
-        />
-        <ReqErrorMsgBox
-          active={IsRequestErr}
-          close={closeModal}
-          message={RequestErrMsg}
-        />
+        <ReqSenderMsgBox active={sendedRequest} close={closeModal} response={peerReponse} />
+        <ReqErrorMsgBox active={IsRequestErr} close={closeModal} message={RequestErrMsg} />
       </div>
     </div>
   );
