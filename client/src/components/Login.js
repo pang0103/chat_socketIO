@@ -13,7 +13,7 @@ export default function Login(props) {
   const login = (e) => {
     e.preventDefault();
     if (usernameLogin && passwordLogin) {
-      Axios.post(`${serverhost.url}/login`, {
+      Axios.post(`${serverhost.api_endpoint}/login`, {
         username: usernameLogin,
         password: passwordLogin,
       }).then((response) => {

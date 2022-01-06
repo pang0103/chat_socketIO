@@ -16,7 +16,9 @@ export default function Chatboard(props) {
   const username = props.userName;
 
   useEffect(() => {
-    socket = io(serverhost.url);
+    socket = io(serverhost.server_end_point, {
+      path: "/socketio",
+    });
   }, [serverhost]);
 
   useEffect(() => {
@@ -111,8 +113,7 @@ export default function Chatboard(props) {
     var minutes = "0" + date.getMinutes();
     // Seconds part from the timestamp
     var seconds = "0" + date.getSeconds();
-    var formattedTime =
-      hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+    var formattedTime = hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
 
     return formattedTime;
   };
@@ -135,17 +136,11 @@ export default function Chatboard(props) {
         <main id="msger-chat" className="msger-chat">
           {messageList.map((val, key) => {
             return (
-              <div
-                className={
-                  val.author == username ? "msg right-msg" : "msg left-msg"
-                }
-              >
+              <div className={val.author == username ? "msg right-msg" : "msg left-msg"}>
                 <div className="msg-bubble">
                   <div className="msg-info">
                     <div className="msg-info-name">{val.author}</div>
-                    <div className="msg-info-time">
-                      {displayTime(val.timestamp)}
-                    </div>
+                    <div className="msg-info-time">{displayTime(val.timestamp)}</div>
                   </div>
                   <div className="msg-text">{val.message}</div>
                 </div>
@@ -174,10 +169,7 @@ export default function Chatboard(props) {
             }}
             disabled={connetionStatus == "" ? "" : "disabled"}
           />
-          <button
-            className="msger-send-btn"
-            disabled={connetionStatus == "" ? "" : "disabled"}
-          >
+          <button className="msger-send-btn" disabled={connetionStatus == "" ? "" : "disabled"}>
             Send
           </button>
         </form>

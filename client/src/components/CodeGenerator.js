@@ -27,7 +27,7 @@ export default function CodeGenerator(props) {
   };
 
   const getKey = () => {
-    Axios.post(`${serverhost.url}/keygen`, null, {
+    Axios.post(`${serverhost.api_endpoint}/keygen`, null, {
       headers: {
         "x-access-token": sessionStorage.getItem("token"),
       },
@@ -49,9 +49,7 @@ export default function CodeGenerator(props) {
 
   return (
     <div>
-      <div
-        className={`${styles2.wrapper} ${styles2.fadeInDown} ${styles.first}`}
-      >
+      <div className={`${styles2.wrapper} ${styles2.fadeInDown} ${styles.first}`}>
         <div className={styles2.formContent}>
           <form>
             <div>

@@ -14,7 +14,7 @@ export default function Register(props) {
   const register = (e) => {
     e.preventDefault();
     if (usernameReg && passwordReg) {
-      Axios.post(`${serverhost.url}/register`, {
+      Axios.post(`${serverhost.api_endpoint}/register`, {
         username: usernameReg,
         password: passwordReg,
       }).then((response) => {
@@ -68,11 +68,7 @@ export default function Register(props) {
               name="password"
               required
             />
-            <input
-              className={styles.input}
-              type="submit"
-              defaultValue="Log In"
-            />
+            <input className={styles.input} type="submit" defaultValue="Log In" />
             <h4 style={{ color: "red", marginbottom: "10px" }}></h4>
           </form>
           {/* Remind Passowrd */}

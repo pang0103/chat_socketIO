@@ -1,4 +1,4 @@
 export const serverhost = {
-  url: process.env.REACT_APP_API_ENDPOINT || "http://localhost:3001",
-  // url: "http://ccp.zone:3001",
+  server_end_point: process.env.REACT_APP_SERVER_ENDPOINT || "http://localhost:3001",
+  api_endpoint: process.env.REACT_APP_API_ENDPOINT || "http://localhost:3001",
 };
