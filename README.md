@@ -10,7 +10,7 @@ docker-compose to start dev environment
 docker-compose -f docker-compose.dev.yml up
 ```
 
-##Demo
+## Demo
 
 http://chat.projects.jcc-p.site
 
