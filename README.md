@@ -2,7 +2,7 @@
 
 built while learning React/ Express/ Docker/ Nginx
 
-## Installation
+## Getting Started
 
 docker-compose to start dev environment
 
