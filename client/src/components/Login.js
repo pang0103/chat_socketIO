@@ -71,9 +71,14 @@ export default function Login(props) {
           </form>
           {/* Remind Passowrd */}
           <div className={styles.formFooter}>
-            <a className={styles.underlineHover} href="/register">
-              Register here !
-            </a>
+            <div className={styles.footerbox}>
+              <a className={styles.underlineHover} href="/register">
+                Register here !
+              </a>
+              <a className={styles.underlineHover} href="/guest">
+                Guest mode
+              </a>
+            </div>
           </div>
         </div>
       </div>

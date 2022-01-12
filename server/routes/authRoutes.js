@@ -1,3 +1,4 @@
+const moment = require("moment");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const mysql = require("mysql");
@@ -24,6 +25,29 @@ router.post("/register", (req, res) => {
         console.log("err: " + err);
       } else {
         res.send({ message: "registered" });
+      }
+    }
+  );
+});
+
+router.post("/guest", (req, res) => {
+  const userName = req.body.guestname;
+  //TODO create a guest that active for 30 mins
+  const expireOn = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
+  console.log(userName + expireOn);
+
+  db.query(
+    "INSERT INTO guests(guest_name, expire_on) VALUES(?, ?)",
+    [userName, expireOn],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.json({ auth: false, message: "guest session start failed" });
+      } else {
+        // res.send({ message: "guest session started" });
+        const token = jwt.sign({ userName }, process.env.JWT_SECRET, { expiresIn: 3000 });
+        res.json({ auth: true, token: token, message: "guest session started" });
       }
     }
   );

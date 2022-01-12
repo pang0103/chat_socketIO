@@ -7,17 +7,14 @@ import Profile from "./components/Profile";
 import ProtectedRoute from "./ProtectedRoute";
 import AccessKey from "./components/AccessKey";
 import Chatboard from "./components/Chatboard";
+import Guest from "./components/Guest";
 import Axios from "axios";
 import "./App.css";
 
 function App() {
-  const [isAuth, setIsAuth] = useState(
-    sessionStorage.getItem("loginState") || false
-  );
+  const [isAuth, setIsAuth] = useState(sessionStorage.getItem("loginState") || false);
 
-  const [userName, setuserName] = useState(
-    sessionStorage.getItem("userName") || ""
-  );
+  const [userName, setuserName] = useState(sessionStorage.getItem("userName") || "");
 
   const [chatStarted, setchatStart] = useState(false);
   const [chatChannel, setchatChannel] = useState("");
@@ -40,25 +37,11 @@ function App() {
     setchatChannel(channelCode);
     setchatStart(true);
   };
-
-  const userAuthtemp = () => {
-    Axios.get("http://ccp.zone:3001/isUserAuth", {
-      headers: {
-        "x-access-token": sessionStorage.getItem("token"),
-      },
-    }).then((response) => {
-      console.log(response);
-    });
-  };
   return (
     <div className="App">
       <Router>
         {isAuth ? (
-          <Navbar
-            userName={userName}
-            isAuth={isAuth}
-            confirmlogout={confirmLogout}
-          />
+          <Navbar userName={userName} isAuth={isAuth} confirmlogout={confirmLogout} />
         ) : null}
 
         <Route path="/" exact>
@@ -80,11 +63,10 @@ function App() {
         <Route path="/register" exact>
           <Register />
         </Route>
-        <ProtectedRoute
-          path="/profile"
-          isProtected={isAuth}
-          component={Profile}
-        />
+        <Route path="/guest" exact>
+          {!isAuth ? <Guest isAuth={confirmAuth} /> : <Redirect to="/chat" />}
+        </Route>
+        <ProtectedRoute path="/profile" isProtected={isAuth} component={Profile} />
       </Router>
     </div>
   );

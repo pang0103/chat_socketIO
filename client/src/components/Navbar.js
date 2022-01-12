@@ -11,7 +11,7 @@ export default function Navbar(props) {
           </a>
         </li>
         <li>
-          <a href="/Profile">Profile</a>
+          <a href="/profile">Profile</a>
         </li>
         {!props.isAuth ? (
           <li style={{ float: "right" }}>

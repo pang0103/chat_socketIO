@@ -300,3 +300,14 @@ h2.active {
 * {
   box-sizing: border-box;
 }
+
+.footerbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 15px;
+}
+
+.footerbox a {
+  padding: 10px;
+}
