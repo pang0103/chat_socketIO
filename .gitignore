@@ -6,6 +6,7 @@
 /client/build
 /server/node_modules
 /backend-nestjs/node_modules
+/backend-nestjs/dist
 /.pnp
 .pnp.js
 
@@ -32,3 +33,4 @@ yarn-error.log*
 **/!.vscode/tasks.json
 **/!.vscode/launch.json
 **/!.vscode/extensions.json
+
