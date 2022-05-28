@@ -1,0 +1,9 @@
+http:
+    host: 'localhost'
+    port: 31000
+
+db:
+    mysql:
+        url: 'localhost'
+        port: 3306
+        database: 'socketchat'
