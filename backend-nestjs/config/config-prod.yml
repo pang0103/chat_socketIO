@@ -6,4 +6,8 @@ db:
     mysql:
         url: 'localhost'
         port: 3306
+        type: 'mysql'
+        password: 'password'
+        username: 'root'
         database: 'socketchat'
+        logging: true

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { config } from 'process';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configuration from './config/configuration';
@@ -8,6 +10,12 @@ import configuration from './config/configuration';
     imports: [
         ConfigModule.forRoot({
             load: [configuration],
+        }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: (configService: ConfigService) =>
+                configService.get('db'),
+            inject: [ConfigService],
         }),
     ],
     controllers: [AppController],
