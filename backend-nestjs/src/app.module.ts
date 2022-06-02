@@ -6,6 +6,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { DatabaseConfig, MySqlConfig } from './config/interface';
+import { AuthModule } from './auth/auth.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseInterceptor } from './core/interceptors/resp-transform.interceptor';
 
 @Module({
     imports: [
@@ -22,8 +25,15 @@ import { DatabaseConfig, MySqlConfig } from './config/interface';
             },
             inject: [ConfigService],
         }),
+        AuthModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: ResponseInterceptor,
+        },
+        AppService,
+    ],
 })
 export class AppModule {}
