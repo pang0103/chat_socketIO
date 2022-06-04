@@ -4,6 +4,10 @@
 /client/node_modules
 /client/.eslintcache
 /client/build
+/client-ts/build
+/client-ts/.eslintcache
+/client-ts/node_modules
+
 /server/node_modules
 /backend-nestjs/node_modules
 /backend-nestjs/dist
